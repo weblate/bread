@@ -111,6 +111,7 @@ class DocumentTemplate(models.Model):
         with tempfile.TemporaryDirectory() as tmpdir:
             with tempfile.NamedTemporaryFile(mode="wb", suffix=".docx") as file:
                 file.write(content.read())
+                file.flush()
                 subprocess.run(  # nosec
                     [
                         shutil.which("soffice")
@@ -126,6 +127,7 @@ class DocumentTemplate(models.Model):
                         tmpdir,
                     ],
                     shell=False,
+                    check=True,
                 )
                 outfilename = os.path.basename(file.name)[:-4] + "pdf"
             with open(os.path.join(tmpdir, outfilename), "rb") as pdffile:
